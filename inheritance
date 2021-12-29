@@ -1,0 +1,185 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+class Publication
+{
+protected:
+	string name;
+	double price;
+public:
+	Publication()
+	{
+		name = "Russian language";
+		price = 1000;
+	}
+	string getName()
+	{
+		string NameOfProduct;
+		cout << "Enter name of publication:" << endl;
+		cin >> NameOfProduct;
+		return NameOfProduct;
+	}
+	void setName(string name)
+	{
+		this->name = name;
+	}
+	double getPrice()
+	{
+		double Price;
+		cout << "Enter price of publication: ";
+		cin >> Price;
+		return  Price;
+	}
+	void setPrice(double price)
+	{
+		this->price = price;
+	}
+};
+
+class Book: public Publication
+{
+	friend void MaxPages(Book book[], int count);
+protected:
+	int pages;
+	int time;
+public:
+	Book()
+	{
+		pages = 100;
+		time = 100;
+	}
+	int getPages()
+	{
+		int pages;
+		cout << "Enter count of Pages" << endl;
+		cin >> pages;
+		return pages;
+	}
+	void setPages(int pages)
+	{
+		this->pages = pages;
+	}
+	int getTime()
+	{
+		int Time;
+		cout << "Enter time" << endl;
+		cin >> Time;
+		return Time;
+	}
+	void setTime(int time)
+	{
+		this->time = time;
+	}
+	void Show(Book book[],int count)
+	{
+		cout << "Name of Book: "<<name<< endl;
+		cout << "Price of Book: " << price << endl;
+		cout << "Count of pages of book: " << pages << endl;
+		cout << "Count of time of audiobook: " << time << endl;
+	}
+	void WriteToFile(Book book[], int count, string filename)
+	{
+		ofstream fout;
+		fout.open(filename, ios::app);
+		if (!fout.is_open())
+		{
+			cout << "error, file is not open\n";
+			return;
+		}
+		else
+		{
+			cout << "name of book: " << name << endl;
+			cout << "price of book: " << price << endl;
+			cout << "count of pages of book: " << pages << endl;
+			cout << "count of time of audiobook: " << time << endl;
+		}
+		fout.close();
+	}
+};
+
+void MaxPages(Book book[],int count)
+{
+	int MaxPages = book[0].pages;
+	for (int i = 0; i < count; i++)
+	{
+		if (book[i].pages > MaxPages)
+		{
+			MaxPages = book[i].pages;
+		}
+	}
+	cout <<"Maximum number of pages: "<<MaxPages<< endl;
+}
+
+void menu()
+{
+	int k, size=1, time, pages;
+	double price;
+	string name,filename;
+	bool g = false;
+	cout << "How many publications do you want to create? " << endl;
+	cin >> size;
+	if (cin.fail() || size <= 0)
+	{
+		exit(0);
+	}
+	Book* book = new Book[size];
+
+	do
+	{
+		cout << "1. Enter book" << endl << "2. Watch books" << endl << "3. Find a book with the maximum number of pages" << endl << "4. Write to File" << endl << "5. Exit" << endl;;
+		cin >> k;
+		switch (k)
+		{
+		case 1:
+			for (int i = 0; i < size; i++)
+			{
+			   cout << "Publication: " << i + 1 << endl;
+			   name=book[i].getName();
+			   book[i].setName(name);
+			   price = book[i].getPrice();
+			   book[i].setPrice(price);
+			   pages = book[i].getPages();
+			   book[i].setPages(pages);
+			   time = book[i].getTime();
+			   book[i].setTime(time);
+			}
+			break;
+		case 2:
+			for (int i = 0; i < size; i++)
+			{
+				cout << "Publication: " << i + 1 << endl;
+				book[i].Show(book, size);
+			}
+			break;
+		case 3:
+			MaxPages(book, size);
+			break;
+		case 4:
+			cout << "Enter name of file" << endl;
+			cin >> filename;
+			//file.close();
+			for (int i = 0; i < size; i++)
+			{
+				book[i].WriteToFile(book, size, filename);
+			}
+			break;
+		case 5:
+			g = true;
+			delete[]book;
+			break;     
+		default:
+			cout << "Try again!" << endl;
+			break;
+
+		}
+	} while (g != true);
+}
+
+void main()
+{
+	menu();
+}
+
+
