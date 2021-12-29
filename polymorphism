@@ -1,0 +1,179 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include<list>
+
+using namespace std;
+
+double In(const char* text = "") {
+    double res;
+    cout << text;
+    while (!(cin >> res) || cin.get() != '\n') {
+        cout << "Ошибка ввода! Попробуйте еще: " << endl;
+        cin.clear();
+        while (cin.get() != '\n');
+    }
+    return res;
+}
+
+class Employee
+{
+protected:
+    string LastName, FirstName, MiddleName;
+    double salary;
+    int count;
+public:
+    Employee() {};
+    Employee(string LastName, string FirstName, string MiddleName)
+    {
+        this->LastName = LastName;
+        this->FirstName = FirstName;
+        this->LastName = LastName;
+    }
+
+    Employee(const Employee& other)
+    {
+        this->LastName = LastName;
+        this->FirstName = FirstName;
+        this->LastName = LastName;
+    }
+
+
+    void getName()
+    {
+        cout << "FullName: " << LastName << FirstName << MiddleName << endl;
+    }
+
+    void setName()
+    {
+        cout << "Enter Lastname: ";
+        cin >> LastName;
+        cout << "Enter FirstName: ";
+        cin >> FirstName;
+        cout << "Enter MiddleName: ";
+        cin >> MiddleName;
+    }
+    virtual void setWork() {};
+    virtual void getWork() {};
+
+};
+
+class WorkerWithHoursPay : public Employee
+{
+
+public:
+    WorkerWithHoursPay() {};
+    WorkerWithHoursPay(string LastName, string FirstName, string MiddleName, double salary, int count) :Employee(LastName, FirstName, MiddleName)
+    {
+        this->salary = salary;
+        this->count = count;
+    }
+
+    void setWork() override
+    {
+        cout << "Enter salary per hour: ";
+        cin >> salary;
+        cout << "Enter a count of hours per week: ";
+        cin >> count;
+    }
+    void getWork() override
+    {
+        cout << "Salary per one hour: " << salary << endl;;
+        cout << "Count of hours per week: " << count << endl;;
+    }
+
+};
+
+class WorkerWithIncentivePay :public Employee
+{
+public:
+    WorkerWithIncentivePay() {};
+    WorkerWithIncentivePay(string LastName, string FirstName, string MiddleName, double salary, int count) :Employee(LastName, FirstName, MiddleName)
+    {
+        this->salary = salary;
+        this->count = count;
+    }
+
+    void setWork() override
+    {
+        cout << "Enter salary per one unit: ";
+        cin >> salary;
+        cout << "Enter a count of units per week: ";
+        cin >> count;
+    }
+    void getWork() override
+    {
+        cout << "Salary per one unit: " << salary << endl;;
+        cout << "Count of units per week: " << count << endl;;
+    }
+};
+
+int main()
+{
+    int choise,size=0,choise2=1, countOfWorkers = 0;
+    bool f = false;
+    cout << "Enter count of workers" << endl;
+    cin >> size;
+    Employee* workers=new Employee[size];
+    WorkerWithHoursPay whp;
+    WorkerWithIncentivePay wip;
+   
+
+    do
+    {
+        cout << "1. Enter information about workers" << endl << "2. Show information about workers" << endl << "3. Exit" << endl;
+        cin >> choise;
+        switch (choise)
+        {
+        case 1:
+        {
+            do
+            {
+                cout << "1. Worker with hours pay" << endl;
+                cout << "2. Worker with incentive pay" << endl;
+                cout << "3. Exit" << endl;
+                int choice2 = In("what type of worker? ");
+                switch (choice2)
+                {
+                case 1:                
+                    whp.setName();
+                    whp.setWork();  
+                    workers[countOfWorkers] = whp;
+                    countOfWorkers++;
+                    break;
+                case 2:
+                    wip.setName();
+                    wip.setWork();
+                    workers[countOfWorkers] = wip;
+                    countOfWorkers++;
+                    break;
+                case 3:
+                    f = true;
+                default:
+                    cout << "Try again!" << endl;
+                    break;
+                }
+                
+            } while (f = false);
+        }
+        system("cls");
+        break;
+        case 2:
+            if (countOfWorkers<=size&& countOfWorkers>0)
+                for (int i = 0; i < countOfWorkers; i++)
+                {
+                    workers[i].getName();
+                    workers[i].getWork();
+                }
+            else
+                cout << "Enter workers and after check it" << endl;
+            break;
+        case 3:
+            return 0;
+        default:
+            cout << "Try again" << endl;
+            break;
+        }
+
+    } while (true);
+}
