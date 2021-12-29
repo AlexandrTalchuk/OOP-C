@@ -1,0 +1,110 @@
+#include <iostream>
+#include <windows.h>
+#include <string>
+#include <conio.h>
+#include <iomanip>
+using namespace std;
+
+class symbol
+{
+	string symbols;
+public:
+	void setData(string);
+	void getData();
+};
+
+void symbol::setData(string String_Symbol)
+{
+	symbols = String_Symbol;
+	
+}
+
+ostream& dec1(ostream& stream)
+{
+	stream.setf(ios::dec);
+	return stream;
+}
+
+void symbol::getData()
+{
+	for (int g = 0; g < symbols.length() - 1; g++)
+	{
+		for (int j = 0; j < symbols.length(); j++)
+		{
+			if (symbols[g] == symbols[j])
+			{
+				symbols.erase(j, 1);\
+			}
+		}
+
+	}
+
+	for (int  i = 0; i < symbols.length(); i++)
+	{
+		cout <<symbols[i]<<dec1<<"\t\t"<<int(symbols[i]) <<"\t\t\t\t" <<oct<< (int)symbols[i] <<"\t\t"<< hex <<(int)symbols[i]<< endl << endl;
+	}
+}
+
+void menu()
+{
+	int n,size;
+	bool d = false, g = true;
+	string String_Symbols;
+		cout << "How many characters do you want to enter?" << endl;
+		cin >> size;
+		if (cin.fail())
+		{
+			cout << "You can enter only numbers, try again" << endl;
+			exit(0);
+		}
+	symbol* mas_of_symbols = new symbol[size];
+	
+
+	do
+	{
+		cout << "1. Input some symbols or numbers"<<endl<<"2. Show table with symbols"<<endl<<"3. Exit" <<endl;
+		cin >> n;
+		switch (n)
+		{
+		case 1:
+			for ( int g = 0;  g < size;  g++)
+			{
+				cin.ignore();
+				getline(cin,String_Symbols);
+				mas_of_symbols[g].setData(String_Symbols);
+			}
+			cout << "Click any button to continue" << endl;
+			_getch();
+			system("cls");
+			break;
+
+		case 2:
+			cout << endl << "Your symbol" << "\t" << "Number from the ASKI table" << "\t" << "Octal kode" << "\t" << "Hexadecimal kode" << endl;
+
+			for (int i = 0; i < size; i++)
+			{
+				mas_of_symbols[i].getData();
+			}
+			cin.ignore();
+			cout << "Press anything bottom to continue" << endl;
+			_getch();
+			system("cls");
+			break;
+
+		case 3:
+			delete[] mas_of_symbols;
+			d = true;
+		    break;
+
+		default:
+			cout << "Try again" << endl;
+			break;
+		}
+
+	} while (d != true);
+}
+
+int main()
+{
+	menu();
+}
