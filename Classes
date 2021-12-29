@@ -1,0 +1,207 @@
+#include <iostream>
+#include "windows.h"
+#include <fstream>
+#include <string>
+using namespace std;
+
+class Time
+{
+ private:
+	int hours, minute, seconds;
+
+ public:
+	Time();
+	Time(int h, int m, int s);
+	Time(const Time& obj);
+	~Time();
+	void distructor();
+	void setTime(string timeString);
+	void getTime();
+	void WritetoFile(string filename);
+};
+
+Time::Time()
+{
+	hours = 8;
+	minute = 11;
+	seconds = 10;
+	cout << "Сработал конструктор по умолчанию для " << this << endl; 
+}
+
+Time::Time(int h, int m, int s)
+{
+	hours = h;
+	minute = m;
+	seconds = s;
+	cout << "Сработал конструктор для " << this << endl;
+}
+
+Time::Time(const Time& obj)
+{
+	cout << "Вызвался конструктор копирования для " << this << endl; 
+	this->hours = obj.hours;
+	this->minute = obj.minute;
+	this->seconds = obj.seconds;
+}
+
+Time::~Time()
+{
+	cout << "Деструктор сработал для " << this << endl;       
+}
+
+void Object_outside_the_access_zone()                          
+{
+	Time object;
+}
+
+void Time::distructor()
+{
+	this->~Time();                                         
+}
+
+void Time::setTime(string timeString)
+{
+	int hours1;
+	int minutes1;
+	int seconds1;
+	if (':' == timeString[1])
+	{
+		timeString.insert(0, "0");
+	}
+	if (':' == timeString[4])
+	{
+		timeString.insert(3, "0");
+	}
+	if ('\0' == timeString[7])
+	{
+		timeString.insert(6, "0");
+	}
+	hours1 = atoi(timeString.c_str());
+	minutes1 = atoi(timeString.c_str() + 3);
+	seconds1 = atoi(timeString.c_str() + 6);
+
+	if (hours1 >=24 || hours1 < 0)
+	{
+		cout << "В одном дне 24 часа, не больше! Обнуляем часы" << endl;
+		hours = 0;
+	}
+	else hours = hours1;
+
+	if (minutes1 > 60 || minutes1 < 0)
+	{
+		cout << "В одном часе 60 минут, не больше! Обнуляем минуты" << endl;
+		minute = 0;
+	}
+	else minute = minutes1;
+
+	if (seconds1 > 60 || seconds1 < 0)
+	{
+		cout << "В одной секунде 60 милисекунд, не больше! Обнуляем секунды" << endl;
+		seconds = 0;	
+	}
+	else seconds = seconds1;
+}
+	
+void Time::getTime()
+{
+	int q;
+	bool n = false;
+	do
+	{
+		cout << "1.Американский лад" << endl << "2.Русский лад" << endl;
+		cin >> q;
+		if (q == 1)
+		{		 
+			if (hours < 10)
+			{
+				cout << "0" << hours;
+			}
+			else if (hours < 12)
+				cout << hours;
+			else if (hours < 22) {
+				cout << "0" << hours % 12;
+			}
+			else
+				cout << hours % 12;
+
+			cout <<  ":" << (minute < 10 ? "0" : "") << minute << ":" << (seconds < 10 ? "0" : "") << seconds << (hours < 12 ? "AM" : "PM") << endl;
+
+		}
+		else if (q == 2)
+		{
+			cout << hours << " часов " << minute << " минут " << seconds << " секунд " << endl;
+		}
+		n = true;
+	} while (n == false);
+}
+
+void Time::WritetoFile(string filename)
+{
+	{
+		ofstream fout;
+		fout.open(filename, ios::app);
+		fout << hours<<":"<<minute<<":"<<seconds<<endl;
+		fout.close();
+	}
+}
+
+int main()
+{
+	setlocale(LC_ALL, "rus");
+	int n, size;
+	bool d = false;
+	cout << "Сколько времен вы хотите ввести?" << endl;
+	cin >> size;
+	Time* times = new Time  [size]; 
+	string timeString;
+	do
+	{
+		cout << "1.Ввести время" << endl << "2.Вывести время" << endl << "3.Записать результат в файл" << endl << "4.Выход" << endl;
+		cin >> n;
+		switch (n)
+		{
+		case 1:
+			cout << "Введите время в формате 23:00:00 или 08:05:03" << endl;
+
+			for (int i = 0; i < size; i++)
+			{
+
+				cin >> timeString;
+				times[i].setTime(timeString);
+	
+			}
+			break;
+		case 2:
+			for (int i = 0; i < size; i++)
+			{
+				times[i].getTime();
+			}
+			Sleep(3000);
+			system("cls");
+			break;
+		case 3:
+		{
+			cout << "Введите имя файла" << endl;
+			string filename;
+			cin >> filename;
+			ofstream file(filename, ios::trunc);
+			file.close();
+			for (int i = 0; i < size; i++)
+			{
+				times[i].WritetoFile(filename);
+			}
+		}
+			break;
+		case 4:
+				delete[] times;
+			d = true;
+			system("cls");
+			break;
+		default:
+			cout << "Повторите еще раз" << endl;
+			break;
+		}
+
+	} while (d != true);
+
+}
