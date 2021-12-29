@@ -1,0 +1,193 @@
+#define russian setlocale(LC_ALL, "ru")
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+class Set
+{
+	double* Array;
+	int size;
+public:
+	Set();
+	Set(int);
+	Set(const Set&);
+	~Set();
+	friend std::ostream& operator<<(ostream&, const Set&);
+	friend std::istream& operator>>(std::istream&, Set&);
+	friend Set operator^(Set&, double);
+	friend Set operator+(const Set&, const Set&);
+	friend Set operator*(const Set&, const Set&);
+	Set operator=(const Set& _Array1)
+	{
+		size = _Array1.size;
+		Array = new double[size];
+		for (int i = 0; i < size; i++)
+			Array[i] = _Array1.Array[i];
+		return *this;
+	}
+};
+
+Set::Set() //Конструктор по умолчанию.
+{
+	size = 1;
+	Array = new double[size];
+	for (int i = 0; i < size; i++)
+		Array[i] = 0;
+}
+
+Set::Set(int _size) //Конструктор с параметрами.
+{
+	size = _size;
+	Array = new double[size];
+	for (int i = 0; i < size; i++)
+		Array[i] = 0;
+}
+
+Set::Set(const Set& _Array) //Конструктор копирования.
+{
+	size = _Array.size;
+	Array = new double[size];
+	for (int i = 0; i < size; i++)
+		Array[i] = _Array.Array[i];
+}
+
+std::istream& operator>>(std::istream& cin, Set& _Array) //Оператор ввода.
+{
+	for (int i = 0; i < _Array.size; i++)
+	{
+		cout << "Введите значение индекса " << i << ": ";
+		cin >> _Array.Array[i];
+	}
+	return cin;
+}
+
+std::ostream& operator<<(ostream& cout, const Set& _Array) //Оператор вывода.
+{
+	for (int i = 0; i < _Array.size; i++)
+		cout << "\nИндекс " << i << ": [" << _Array.Array[i] << "] ";
+	return cout;
+}
+
+Set operator^(Set& _Array, double temporary) //Оператор добавления.
+{
+	int counter = 0;
+	for (int i = 0; i < _Array.size; i++)
+	{
+		if (_Array.Array[i] == temporary)
+		{
+			++counter;
+			break;
+		}
+	}
+	if (counter == 0)
+	{
+		_Array.Array[_Array.size] = temporary;
+		++_Array.size;
+	}
+	return _Array;
+}
+
+Set operator+(const Set& _Array1, const Set& _Array2) //Оператор объединения множеств.
+{
+	Set Array = _Array1;
+	for (int i = 0; i < _Array1.size; i++)
+		Array.Array[i] = _Array1.Array[i];
+	for (int i = 0; i < _Array2.size; i++)
+		Array = Array ^ _Array2.Array[i];
+	return Array;
+}
+bool Checker(double *mas, double checker, int realsize)
+{
+	bool IsHere = false;
+	for (int i = 0; i < realsize; i++)
+	{
+		if (mas[i] == checker)
+		{
+			IsHere = true;
+			break;
+		}
+	}
+	return IsHere;
+}
+Set operator*(const Set& _Array1, const Set& _Array2) //Оператор пересечения множеств.
+{
+	Set res;
+	int realsize = 0;
+	double* mas = new double[_Array1.size];
+	for (int i = 0; i < _Array1.size; i++)
+	{
+		if (!Checker(mas, _Array1.Array[i], realsize))
+		{
+			for (int j = 0; j < _Array2.size; j++)
+			{
+				if (_Array1.Array[i] == _Array2.Array[j])
+				{
+					mas[realsize] = _Array1.Array[i];
+					realsize++;
+					break;
+				}
+			}
+		}
+	}
+	res.Array = new double[realsize];
+	for (int i = 0; i < realsize; i++)
+	{
+		res.Array[i] = mas[i];
+	}
+	delete[]mas;
+	res.size = realsize;
+	return res;
+
+}
+
+Set::~Set() //Деструктор.
+{
+	delete[] Array;
+}
+
+int main()
+{
+	russian;
+	int size1, size2;
+	cout << "Введите размер массива 1: ";
+	cin >> size1;
+	Set Array1(size1);
+	cin >> Array1;
+	cout << Array1 << endl;
+	cout << "Введите размер массива 2: ";
+	cin >> size2;
+	Set Array2(size2);
+	cin >> Array2;
+	cout << Array2 << endl;
+	int menu;
+	bool choice = 1;
+	while (choice)
+	{
+		cout << "\n\nВыберите действие: "
+			<< "\n1: Найти пересечение; "
+			<< "\n2: Найти объединение; "
+			<< "\nЛюбая клавиша: Выход из программы."
+			<< "\n>> ";
+		cin >> menu;
+		switch (menu)
+		{
+		case 1:
+		{
+			Set Array3 = Array1 * Array2;
+			cout << "Пересечение массивов: " << endl << Array3;
+			break;
+		}
+		case 2:
+		{
+			Set Array4 = Array1 + Array2;
+			cout << "Объединение массивов: " << endl << Array4;
+			break;
+		}
+		default:
+			return 0;
+		}
+	}
+	system("pause");
+	return 0;
+}
